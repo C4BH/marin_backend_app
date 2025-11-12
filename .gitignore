@@ -1,0 +1,96 @@
+# ===========================================
+# ENVIRONMENT VARIABLES
+# ===========================================
+.env
+.env.local
+.env.*.local
+
+# ===========================================
+# NODE MODULES
+# ===========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===========================================
+# BUILD & DISTRIBUTION
+# ===========================================
+dist/
+build/
+*.tsbuildinfo
+
+# ===========================================
+# TESTING & COVERAGE
+# ===========================================
+coverage/
+.nyc_output/
+*.lcov
+
+# ===========================================
+# LOGS
+# ===========================================
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ===========================================
+# OPERATING SYSTEM FILES
+# ===========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ===========================================
+# IDE & EDITOR FILES
+# ===========================================
+# VSCode
+.vscode/
+*.code-workspace
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*.swn
+
+# ===========================================
+# TEMPORARY FILES
+# ===========================================
+tmp/
+temp/
+*.tmp
+*.bak
+*.cache
+
+# ===========================================
+# OPTIONAL FILES
+# ===========================================
+# AWS
+.aws/
+
+# MongoDB
+data/
