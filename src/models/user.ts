@@ -5,7 +5,9 @@ import {
     UserRoleType,
     AllUserRoles,
     AllGenders,
-    AllAuthProviders
+    AllAuthProviders,
+    SubscriptionPlanType,
+    SubscriptionStatusType
 } from "./constants";
 
 const userSchema = new mongoose.Schema({
@@ -227,7 +229,33 @@ interface User extends mongoose.Document {
     
     // Role
     role: UserRoleType,
-    
+    subscription: {
+        plan: SubscriptionPlanType;
+        status: SubscriptionStatusType;
+        
+        // Dates
+        startDate?: Date;
+        endDate?: Date;
+        cancelledAt?: Date;
+        
+        // Trial
+        trialEndsAt?: Date;
+        isTrialUsed: boolean;
+        
+        // Limits & Usage
+        limits: {
+            meetingsPerMonth: number;
+            chatbotMessages: number;
+            advisorAccess: boolean;
+            prioritySupport: boolean;
+        };
+        
+        usage: {
+            meetingsThisMonth: number;
+            chatbotMessagesThisMonth: number;
+            lastResetDate: Date;
+        };
+    };
     // Auth
     isEmailVerified: boolean,
     verificationCode?: string,

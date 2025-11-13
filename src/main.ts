@@ -12,6 +12,7 @@ dotenv.config();
 // Bu sayede model import'ları mongoose bağlantısından sonra çalışır
 let authRoutes: Router;
 let userRoutes: Router;
+let chatRoutes: Router;
 
 // Initialize Express app
 const app: Express = express();
@@ -130,9 +131,10 @@ app.get(`/api/${API_VERSION}`, (req: Request, res: Response) => {
         version: API_VERSION,
         description: 'Personalized Supplement Recommendation Platform',
         documentation: '/api/v1/docs',
-        endpoints: {
+            endpoints: {
             auth: `/api/${API_VERSION}/auth`,
             users: `/api/${API_VERSION}/users`,
+            chat: `/api/${API_VERSION}/chat`,
             supplements: `/api/${API_VERSION}/supplements`,
             meetings: `/api/${API_VERSION}/meetings`,
             notifications: `/api/${API_VERSION}/notifications`
@@ -229,6 +231,8 @@ const startServer = async () => {
         app.use(`/api/${API_VERSION}/auth`, authRoutes);
         userRoutes = (await import('./routes/user')).default;
         app.use(`/api/${API_VERSION}/users`, userRoutes);
+        chatRoutes = (await import('./routes/chat')).default;
+        app.use(`/api/${API_VERSION}/chat`, chatRoutes);
         console.log('✅ Routes mounted successfully');
         
         // 3. 404 Handler'ı routes'lardan SONRA tanımla
@@ -271,6 +275,11 @@ const gracefulShutdown = async (signal: string) => {
     console.log(`\n⚠️  ${signal} received. Starting graceful shutdown...`);
     
     try {
+        // Cleanup conversation store
+        const { conversationStore } = await import('./utils/conversation-store');
+        conversationStore.shutdown();
+        console.log('✅ Conversation store cleaned up');
+        
         // Close MongoDB connection
         await mongoose.connection.close();
         console.log('✅ MongoDB connection closed');
