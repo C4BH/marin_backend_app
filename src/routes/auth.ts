@@ -33,6 +33,6 @@ router.use(resetPasswordLimiter as any);
 router.use(logResetPasswordAttempt as any);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
-router.post("/change-password", changePassword);
+// router.post("/change-password", changePassword);
 
 export default router;

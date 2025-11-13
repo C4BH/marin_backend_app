@@ -2,7 +2,10 @@ import mongoose, { ObjectId } from "mongoose";
 import {
     SupplementFormType,
     EffectivenessType,
-    SourceTypeType
+    SourceTypeType,
+    AllSupplementForms,
+    AllEffectivenessLevels,
+    AllSourceTypes
 } from "./constants";
 
 const supplementSchema = new mongoose.Schema({
@@ -18,6 +21,11 @@ const supplementSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    form: {
+        type: String,
+        enum: AllSupplementForms,
+        required: true
+    },
     ingredients: [{
       name: {
         type: String,
@@ -31,20 +39,159 @@ const supplementSchema = new mongoose.Schema({
         type: String,
         required: true
       },
-      dailyValue: Number
+      dailyValue: Number,
+      source: {
+        type: String,
+        enum: ['natural', 'synthetic'],
+        required: false
+      }
     }],
+    usage: {
+      type: {
+        recommendedDosage: {
+          type: String,
+          required: false
+        },
+        frequency: {
+          type: String,
+          required: false
+        },
+        timing: {
+          type: String,
+          required: false
+        },
+        duration: {
+          type: String,
+          required: false
+        }
+      },
+      required: false,
+      _id: false
+    },
     scientificData: {
-      consensusScore: Number,
-      studyCount: Number,
-      summary: String
+      type: {
+        consensusScore: {
+          type: Number,
+          required: false
+        },
+        studyCount: {
+          type: Number,
+          required: false
+        },
+        effectiveness: {
+          type: String,
+          enum: AllEffectivenessLevels,
+          required: false
+        },
+        summary: {
+          type: String,
+          required: false
+        },
+        lastUpdated: {
+          type: Date,
+          required: false
+        },
+        sources: {
+          type: [{
+            title: {
+              type: String,
+              required: true
+            },
+            url: {
+              type: String,
+              required: true
+            },
+            publicationDate: {
+              type: Date,
+              required: false
+            }
+          }],
+          required: false
+        }
+      },
+      required: false,
+      _id: false
     },
     medicalInfo: {
-      description: String,
-      sideEffects: [String],
-      interactions: [String]
+      type: {
+        description: {
+          type: String,
+          required: false
+        },
+        approvedUses: {
+          type: [String],
+          required: false
+        },
+        sideEffects: {
+          type: [String],
+          required: false
+        },
+        interactions: {
+          type: [String],
+          required: false
+        },
+        contraindications: {
+          type: [String],
+          required: false
+        },
+        warnings: {
+          type: [String],
+          required: false
+        }
+      },
+      required: false,
+      _id: false
     },
-    rating: Number, // Ortalama rating
-    category: [String]
+    rating: {
+      type: Number,
+      required: false
+    },
+    reviewCount: {
+      type: Number,
+      default: 0
+    },
+    category: {
+      type: [String],
+      required: false
+    },
+    sourceType: {
+      type: String,
+      enum: AllSourceTypes,
+      required: true
+    },
+    sourceId: {
+      type: String,
+      required: false
+    },
+    lastSynced: {
+      type: Date,
+      required: false
+    },
+    price: {
+      type: Number,
+      required: false
+    },
+    currency: {
+      type: String,
+      required: false
+    },
+    availability: {
+      type: Boolean,
+      required: false
+    },
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
+    }
   });
 
 interface Supplement extends mongoose.Document {

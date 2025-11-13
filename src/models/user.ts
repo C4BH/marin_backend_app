@@ -3,7 +3,9 @@ import {
     AuthProviderType,
     GenderType,
     UserRoleType,
-    AllUserRoles
+    AllUserRoles,
+    AllGenders,
+    AllAuthProviders
 } from "./constants";
 
 const userSchema = new mongoose.Schema({
@@ -76,7 +78,40 @@ const userSchema = new mongoose.Schema({
         required: false
     },
     advisorProfile: {
-        type: Object,
+        type: {
+            specialization: {
+                type: [String],
+                default: []
+            },
+            bio: {
+                type: String,
+                default: ""
+            },
+            certifications: {
+                type: [String],
+                default: []
+            },
+            experience: {
+                type: Number,
+                default: 0
+            },
+            averageRating: {
+                type: Number,
+                default: 0
+            },
+            totalReviews: {
+                type: Number,
+                default: 0
+            },
+            isAvailable: {
+                type: Boolean,
+                default: true
+            },
+            hourlyRate: {
+                type: Number,
+                required: false
+            }
+        },
         required: false,
         default: {
             specialization: [],
@@ -84,7 +119,8 @@ const userSchema = new mongoose.Schema({
             certifications: [],
             experience: 0,
             averageRating: 0,
-            totalReviews: 0
+            totalReviews: 0,
+            isAvailable: true
         }
     },
     refreshTokens: {
@@ -103,6 +139,76 @@ const userSchema = new mongoose.Schema({
             }
         }],
         default: []
+    },
+    weight: {
+        type: Number,
+        required: false
+    },
+    height: {
+        type: Number,
+        required: false
+    },
+    phone: {
+        type: String,
+        required: false
+    },
+    dateOfBirth: {
+        type: Date,
+        required: false
+    },
+    gender: {
+        type: String,
+        enum: AllGenders,
+        required: false
+    },
+    enterpriseId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Enterprise",
+        required: false
+    },
+    meetingStats: {
+        type: {
+            totalMeetings: {
+                type: Number,
+                default: 0
+            },
+            completedMeetings: {
+                type: Number,
+                default: 0
+            },
+            cancelledMeetings: {
+                type: Number,
+                default: 0
+            },
+            noShowCount: {
+                type: Number,
+                default: 0
+            }
+        },
+        required: false
+    },
+    authProvider: {
+        type: {
+            providerType: {
+                type: String,
+                enum: AllAuthProviders,
+                required: true
+            },
+            providerId: {
+                type: String,
+                required: false
+            },
+            providerData: {
+                type: mongoose.Schema.Types.Mixed,
+                required: false
+            }
+        },
+        required: false,
+        _id: false
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
     },
     lastLoginAt: {
         type: Date,
@@ -135,7 +241,7 @@ interface User extends mongoose.Document {
     
     // Social login
     authProvider?: {
-        type: AuthProviderType,
+        providerType: AuthProviderType,
         providerId?: string,
         providerData?: any
     },

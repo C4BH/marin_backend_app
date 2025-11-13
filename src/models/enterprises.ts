@@ -1,5 +1,5 @@
 import mongoose, { ObjectId } from "mongoose";
-import { EnterprisePlanType } from "./constants";
+import { EnterprisePlanType, AllEnterprisePlans } from "./constants";
 
 const enterpriseSchema = new mongoose.Schema({
     _id: {
@@ -13,6 +13,58 @@ const enterpriseSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true
+    },
+    contactPerson: {
+        type: String,
+        required: false
+    },
+    phone: {
+        type: String,
+        required: false
+    },
+    plan: {
+        type: String,
+        enum: AllEnterprisePlans,
+        required: true
+    },
+    maxUsers: {
+        type: Number,
+        required: true
+    },
+    planFeatures: {
+        type: {
+            meetingsPerUserPerMonth: {
+                type: Number,
+                required: false
+            },
+            prioritySupport: {
+                type: Boolean,
+                default: false
+            },
+            customBranding: {
+                type: Boolean,
+                default: false
+            },
+            analyticsAccess: {
+                type: Boolean,
+                default: false
+            }
+        },
+        required: false,
+        _id: false
+    },
+    subscriptionStartDate: {
+        type: Date,
+        required: false
+    },
+    subscriptionEndDate: {
+        type: Date,
+        required: false
+    },
+    isActive: {
+        type: Boolean,
+        required: true,
+        default: true
     },
     users: {
         type: [mongoose.Schema.Types.ObjectId],

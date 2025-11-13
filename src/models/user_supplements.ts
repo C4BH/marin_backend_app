@@ -5,12 +5,12 @@ const userSupplementsSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    user: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
-    supplement: {
+    supplementId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Supplement",
         required: true
@@ -41,7 +41,7 @@ const userSupplementsSchema = new mongoose.Schema({
     },
     endDate: {
         type: Date,
-        required: true
+        required: false
     },
     isActive: {
         type: Boolean,
@@ -49,25 +49,33 @@ const userSupplementsSchema = new mongoose.Schema({
     },
     personalRating: {
         type: Number,
-        required: true
+        required: false
     },
     effectiveness: {
         type: Number,
-        required: true
+        required: false
     },
     notes: {
         type: String,
-        required: true
+        required: false
     },
     prescribedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Advisor",
-        required: true
+        ref: "User",
+        required: false
     },
     relatedMeeting: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Meeting",
-        required: true
+        required: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
     }
 });
 

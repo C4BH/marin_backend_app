@@ -28,7 +28,7 @@ const meetingSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    time: {
+    scheduledTime: {
         type: Date,
         required: true
     },
@@ -36,30 +36,57 @@ const meetingSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    userRating: {
-        type: Number,
-        required: true
-    },
-    advisorRating: {
-        type: Number,
-        required: true
-    },
-    userRatingNote: {
-        type: String,
-        required: true
-    },
-    advisorRatingNote: {
-        type: String,
-        required: true
-    },
-    meetingStatus: {
+    status: {
         type: String,
         enum: AllMeetingStatuses,
         required: true
     },
+    userRating: {
+        type: Number,
+        required: false
+    },
+    advisorRating: {
+        type: Number,
+        required: false
+    },
+    userRatingNote: {
+        type: String,
+        required: false
+    },
+    advisorRatingNote: {
+        type: String,
+        required: false
+    },
+    advisorNotes: {
+        type: String,
+        required: false
+    },
+    discussedSupplements: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Supplement",
+        required: false
+    },
+    recommendations: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Supplement",
+        required: false
+    },
+    cancelledBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: false
+    },
     cancellationReason: {
         type: String,
-        required: true
+        required: false
+    },
+    completedAt: {
+        type: Date,
+        required: false
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
     }
 });
 

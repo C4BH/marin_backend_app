@@ -4,7 +4,11 @@ import mongoose from "mongoose";
 import { validateEmail } from "../types/e-mail_format_check";
 import { validateStrongPassword } from "../types/password_validator";
 import { TokenService } from "../utils/generate_token";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
+
+// 6 haneli sayısal kod üretmek için custom alphabet
+// Sadece 0-9 rakamlarını kullanarak 6 haneli kod üretir
+const generateNumericCode = customAlphabet('0123456789', 6);
 
 // Service response type'ı
 interface ServiceResponse {
@@ -123,8 +127,8 @@ export const registerService = async (
         return { isSuccess: false, message: "Kullanıcı zaten mevcut" };
     }
 
-    // 5. Verification code oluştur
-    const verificationCode = nanoid(6);
+    // 5. Verification code oluştur (6 haneli sayısal kod)
+    const verificationCode = generateNumericCode();
 
     // 6. Password hash'le
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -244,7 +248,8 @@ export const resendVerificationCodeService = async (
     }
 
     // 4. Yeni kod oluştur (süresi dolmuş olsa bile yenisini gönder)
-    const verificationCode = nanoid(6);
+    // 6 haneli sayısal kod üretir
+    const verificationCode = generateNumericCode();
     user.verificationCode = verificationCode;
     user.verificationCodeExpires = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24 saat
     await user.save();
@@ -309,8 +314,8 @@ export const forgotPasswordService = async (
         return { isSuccess: false, message: "Email doğrulanmamış" };
     }
 
-    // 4. Verification code oluştur
-    const verificationCode = nanoid(6);
+    // 4. Verification code oluştur (6 haneli sayısal kod)
+    const verificationCode = generateNumericCode();
     user.verificationCode = verificationCode;
     user.verificationCodeExpires = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24 saat
     await user.save();

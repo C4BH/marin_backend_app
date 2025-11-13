@@ -47,8 +47,19 @@ const notificationSchema = new mongoose.Schema({
         required: true
     },
     relatedEntity: {
-        type: Object,
-        required: false
+        type: {
+            type: {
+                type: String,
+                enum: ['supplement', 'meeting', 'form'],
+                required: true
+            },
+            id: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: true
+            }
+        },
+        required: false,
+        _id: false
     },
     createdAt: {
         type: Date,

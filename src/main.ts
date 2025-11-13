@@ -11,6 +11,7 @@ dotenv.config();
 // Routes - Lazy import (bağlantıdan sonra yüklenecek)
 // Bu sayede model import'ları mongoose bağlantısından sonra çalışır
 let authRoutes: Router;
+let userRoutes: Router;
 
 // Initialize Express app
 const app: Express = express();
@@ -146,7 +147,6 @@ app.get(`/api/${API_VERSION}`, (req: Request, res: Response) => {
  */
 
 // TODO: Mount other routes when ready (startServer içinde)
-// app.use(`/api/${API_VERSION}/users`, userRoutes);
 // app.use(`/api/${API_VERSION}/supplements`, supplementRoutes);
 // app.use(`/api/${API_VERSION}/user-supplements`, userSupplementRoutes);
 // app.use(`/api/${API_VERSION}/meetings`, meetingRoutes);
@@ -227,7 +227,8 @@ const startServer = async () => {
         // Bu sayede model import'ları mongoose bağlantısı hazır olduğunda çalışır
         authRoutes = (await import('./routes/auth')).default;
         app.use(`/api/${API_VERSION}/auth`, authRoutes);
-        
+        userRoutes = (await import('./routes/user')).default;
+        app.use(`/api/${API_VERSION}/users`, userRoutes);
         console.log('✅ Routes mounted successfully');
         
         // 3. 404 Handler'ı routes'lardan SONRA tanımla
