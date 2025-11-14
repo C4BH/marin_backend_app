@@ -3,7 +3,8 @@ import {
     FormCategoryType,
     FormAnswerTypeValue,
     AllFormCategories,
-    AllFormAnswerTypes
+    AllFormAnswerTypes,
+    GenderType
 } from "./constants";
 
 const formResponseSchema = new mongoose.Schema({
@@ -19,7 +20,6 @@ const formResponseSchema = new mongoose.Schema({
     formQuestionId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "FormQuestion",
-        required: true
     },
     answer: {
         type: String,
@@ -101,8 +101,24 @@ interface FormQuestion extends mongoose.Document {
 interface FormResponse extends mongoose.Document {
     _id: ObjectId,
     userId: ObjectId,
-    formQuestionId: ObjectId,
-    answer: string | number | boolean, // Type'a göre değişir
+    formData: {
+        age: number,
+        occupation: string,
+        height: number,
+        weight: number,
+        gender: GenderType,
+        exerciseRegularly: boolean,
+        alcoholSmoking: string,
+        dietTypes: string[],
+        allergies: string[],
+        abnormalBloodTests: string[],
+        chronicConditions: string[],
+        medications: string[],
+        supplementGoals: string[],
+        additionalNotes: string
+},
+    createdAt: Date,
+    updatedAt: Date,
     answeredAt: Date
 }
 

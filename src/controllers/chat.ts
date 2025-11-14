@@ -11,13 +11,13 @@ import { logger } from '../utils/logger';
 // Request validation schemas
 const sendMessageSchema = z.object({
     message: z.string()
-        .min(1, 'Message cannot be empty')
-        .max(2000, 'Message too long (max 2000 characters)'),
+        .min(1, 'Boş mesaj gönderilemez')
+        .max(2000, 'Maksimum 2000 karakter gönderilebilir'),
     sessionId: z.string().uuid().optional()
 });
 
 const clearConversationSchema = z.object({
-    sessionId: z.string().uuid('Invalid session ID format')
+    sessionId: z.string().uuid('Geçersiz session ID formatı')
 });
 
 /**
@@ -32,7 +32,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
         if (!validationResult.success) {
             res.status(400).json({
                 success: false,
-                error: validationResult.error.errors[0]?.message || 'Invalid request data'
+                error: validationResult.error.message || 'Geçersiz istek verisi'
             });
             return;
         }
@@ -43,7 +43,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
         if (!userId) {
             res.status(401).json({
                 success: false,
-                error: 'User not authenticated'
+                error: 'Kullanıcı oturum açmamış'
             });
             return;
         }
@@ -53,12 +53,12 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
         if (estimatedTokens > 1000) {
             res.status(400).json({
                 success: false,
-                error: 'Message too long. Please shorten your message.'
+                error: 'Mesaj çok uzun. Lütfen mesajınızı kısaltınız.'
             });
             return;
         }
 
-        logger.info(`Chat message received from user: ${userId}, sessionId: ${sessionId || 'new'}`);
+        logger.info(`Chat mesajı kullanıcıdan alındı: ${userId}, sessionId: ${sessionId || 'yeni'}`);
 
         // Process message
         const result = await chatService.sendMessage(userId, message, sessionId);
@@ -69,10 +69,10 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
         });
 
     } catch (error: any) {
-        logger.error(`Error in sendMessage controller: ${error.message}`, { error });
+        logger.error(`sendMessage controller hatası: ${error.message}`, { error });
 
         // User-friendly error messages
-        const errorMessage = error.message || 'An unexpected error occurred';
+        const errorMessage = error.message || 'Beklenmeyen bir hata oluştu';
         const statusCode = error.message.includes('quota') || error.message.includes('rate_limit') ? 503 : 500;
 
         res.status(statusCode).json({
@@ -94,7 +94,7 @@ export const clearConversation = async (req: Request, res: Response): Promise<vo
         if (!validationResult.success) {
             res.status(400).json({
                 success: false,
-                error: 'Invalid session ID format'
+                error: 'Geçersiz session ID formatı'
             });
             return;
         }
@@ -105,12 +105,12 @@ export const clearConversation = async (req: Request, res: Response): Promise<vo
         if (!userId) {
             res.status(401).json({
                 success: false,
-                error: 'User not authenticated'
+                error: 'Kullanıcı oturum açmamış'
             });
             return;
         }
 
-        logger.info(`Clear conversation request from user: ${userId}, sessionId: ${sessionId}`);
+        logger.info(`Konuşma temizleme isteği kullanıcıdan alındı: ${userId}, sessionId: ${sessionId}`);
 
         // Clear conversation
         const cleared = chatService.clearConversation(sessionId);
@@ -118,21 +118,21 @@ export const clearConversation = async (req: Request, res: Response): Promise<vo
         if (cleared) {
             res.status(200).json({
                 success: true,
-                message: 'Conversation cleared successfully'
+                message: 'Konuşma başarıyla temizlendi'
             });
         } else {
             res.status(404).json({
                 success: false,
-                error: 'Conversation session not found'
+                error: 'Konuşma oturumu bulunamadı'
             });
         }
 
     } catch (error: any) {
-        logger.error(`Error in clearConversation controller: ${error.message}`, { error });
+        logger.error(`clearConversation controller hatası: ${error.message}`, { error });
 
         res.status(500).json({
             success: false,
-            error: 'Failed to clear conversation'
+            error: 'Konuşma temizleme başarısız'
         });
     }
 };

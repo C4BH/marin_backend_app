@@ -24,9 +24,22 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    surname: {
+        type: String,
+        required: false
+    },
     email: {
         type: String,
         required: true
+    },
+    formData: {
+        type: mongoose.Schema.Types.Mixed,
+        required: false
+    },
+    isFormFilled: {
+        type: Boolean,
+        required: true,
+        default: false
     },
     isEmailVerified: {
         type: Boolean,
@@ -223,6 +236,7 @@ interface User extends mongoose.Document {
     
     // Temel bilgiler
     name: string,
+    surname: string,
     email: string,
     password?: string, // Social login varsa opsiyonel
     phone?: string,
@@ -306,6 +320,7 @@ interface User extends mongoose.Document {
             isAvailable: boolean, // ✅ Ekle - Meeting alıyor mu?
             hourlyRate?: number // ✅ Ekle - İleride ücretli danışmanlık için Kişiye özel ücretlendirme yapılırsa diye var
         }
+
 }
 
 // Model'i oluştur veya mevcut olanı kullan (hot-reload için)
