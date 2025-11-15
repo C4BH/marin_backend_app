@@ -4,71 +4,74 @@ import {
     FormAnswerTypeValue,
     AllFormCategories,
     AllFormAnswerTypes,
-    GenderType
+    GenderType,
+    AllGenders
 } from "./constants";
 
 const formResponseSchema = new mongoose.Schema({
-    _id: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
-    formQuestionId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "FormQuestion",
-    },
-    answer: {
-        type: String,
-        required: true
-    },
-    answeredAt: {
-        type: Date,
-        default: Date.now
-    }
-});
-
-const formQuestionSchema = new mongoose.Schema({
-    _id: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-    },
-    questionNumber: {
-        type: Number,
-        required: true
-    },
-    questionText: {
-        type: String,
-        required: true
-    },
-    category: {
-        type: String,
-        enum: AllFormCategories,
-        required: true
-    },
-    answerType: {
-        type: String,
-        enum: AllFormAnswerTypes,
-        required: true
-    },
-    options: {
-        type: [String],
-        required: false
-    },
-    isRequired: {
-        type: Boolean,
-        required: true
-    },
-    order: {
-        type: Number,
-        required: true
-    },
-    isActive: {
-        type: Boolean,
-        required: true
+    formData: {
+        age: {
+            type: Number,
+            required: false
+        },
+        occupation: {
+            type: String,
+            required: false
+        },
+        height: {
+            type: Number,
+            required: false
+        },
+        weight: {
+            type: Number,
+            required: false
+        },
+        gender: {
+            type: String,
+            enum: AllGenders,
+            required: false
+        },
+        exerciseRegularly: {
+            type: Boolean,
+            required: false
+        },
+        alcoholSmoking: {
+            type: String,
+            required: false
+        },
+        dietTypes: {
+            type: [String],
+            required: false
+        },
+        allergies: {
+            type: [String],
+            required: false
+        },
+        abnormalBloodTests: {
+            type: [String],
+            required: false
+        },
+        chronicConditions: {
+            type: [String],
+            required: false
+        },
+        medications: {
+            type: [String],
+            required: true
+        },
+        supplementGoals: {
+            type: [String],
+            required: false
+        },
+        additionalNotes: {
+            type: String,
+            required: false
+        }
     },
     createdAt: {
         type: Date,
@@ -77,26 +80,12 @@ const formQuestionSchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now
+    },
+    answeredAt: {
+        type: Date,
+        required: true
     }
 });
-
-
-interface FormQuestion extends mongoose.Document {
-    _id: ObjectId,
-    questionNumber: number,
-    questionText: string,
-    category: FormCategoryType,
-    
-    answerType: FormAnswerTypeValue,
-    options?: string[], // multiple_choice için
-    
-    isRequired: boolean,
-    order: number,
-    isActive: boolean,
-    
-    createdAt: Date,
-    updatedAt: Date
-}
 
 interface FormResponse extends mongoose.Document {
     _id: ObjectId,

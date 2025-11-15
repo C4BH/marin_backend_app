@@ -5,10 +5,10 @@ export const UserRole = {
 } as const;
 
 export const Gender = {
-    MALE: 'male',
-    FEMALE: 'female',
-    OTHER: 'other'
-} as const;
+    MALE: 'Male' as const,
+    FEMALE: 'Female' as const,
+    OTHER: 'Other' as const,
+};
 
 export const AuthProvider = {
     EMAIL: 'email',

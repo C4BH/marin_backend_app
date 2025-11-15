@@ -42,6 +42,7 @@ export const healthProfileService = async (userId: string, data: any) => {
         if (!user) {
             return { isSuccess: false, message: "Kullanıcı bulunamadı" };
         }
+        console.log("gelen data:", data);
         const formData = {
             age: data.age,
             occupation: data.occupation,
