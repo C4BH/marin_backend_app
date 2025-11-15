@@ -84,3 +84,7 @@ interface Payment extends mongoose.Document {
     createdAt: Date,
     updatedAt: Date
 }
+
+const Payment = mongoose.model<Payment>("Payment", paymentSchema);
+
+export default Payment;

@@ -13,6 +13,7 @@ dotenv.config();
 let authRoutes: Router;
 let userRoutes: Router;
 let chatRoutes: Router;
+let supplementRoutes: Router;
 
 // Initialize Express app
 const app: Express = express();
@@ -233,7 +234,14 @@ const startServer = async () => {
         app.use(`/api/${API_VERSION}/users`, userRoutes);
         chatRoutes = (await import('./routes/chat')).default;
         app.use(`/api/${API_VERSION}/chat`, chatRoutes);
+        supplementRoutes = (await import('./routes/supplement')).default;
+        app.use(`/api/${API_VERSION}/supplements`, supplementRoutes);
         console.log('✅ Routes mounted successfully');
+        
+        // 5. Start scheduled jobs
+        const { startVademecumSyncJob } = await import('./jobs/vademecum-sync.job');
+        startVademecumSyncJob();
+        console.log('✅ Scheduled jobs started');
         
         // 3. 404 Handler'ı routes'lardan SONRA tanımla
         // Bu sayede tanımlı routes'lar önce kontrol edilir

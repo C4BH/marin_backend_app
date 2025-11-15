@@ -109,3 +109,5 @@ interface UserSupplements extends mongoose.Document {
 }
 
 const UserSupplements = mongoose.model<UserSupplements>("UserSupplements", userSupplementsSchema);
+
+export default UserSupplements;

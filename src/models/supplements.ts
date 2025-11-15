@@ -175,6 +175,14 @@ const supplementSchema = new mongoose.Schema({
       type: String,
       required: false
     },
+    imageUrl: {
+      type: String,
+      required: false
+    },
+    manufacturer: {
+      type: String,
+      required: false
+    },
     availability: {
       type: Boolean,
       required: false
@@ -253,6 +261,8 @@ interface Supplement extends mongoose.Document {
         // Ticari bilgi (ileride)
         price?: number,
         currency?: string,
+        imageUrl?: string,
+        manufacturer?: string,
         availability?: boolean,
         
         isActive: boolean, // ⭐ Eksik - Admin onayı için

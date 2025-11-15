@@ -1,5 +1,7 @@
 import FormResponse from "../models/form";
 import User from "../models/user";
+import { getRecommendedProducts } from './vademecum';
+import { logger } from '../utils/logger';
 
 
 export const WeightAndHeightService = async (userId: string, weight: number, height: number) => {
@@ -69,6 +71,16 @@ export const healthProfileService = async (userId: string, data: any) => {
         if (!updatedUser) {
             return { isSuccess: false, message: "Kullanıcı bulunamadı" };
         }
+
+        // Form kaydedildikten sonra ürün önerilerini generate et
+        try {
+            const recommendations = await getRecommendedProducts(userId);
+            logger.info(`Form tamamlandı, ${recommendations.totalMatches} ürün önerisi hazır - userId: ${userId}`);
+        } catch (error: any) {
+            // Ürün önerileri oluşturulamazsa hata verme, sadece logla
+            logger.warn(`Form kaydedildi ama ürün önerileri oluşturulamadı: ${error.message}`);
+        }
+
         return { isSuccess: true, message: "Sağlık profili başarıyla kaydedildi" };
     } catch (error) {
         console.error("healthProfileService hatası:", error);

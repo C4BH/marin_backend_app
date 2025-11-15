@@ -1,15 +1,45 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { ChatService } from '../../services/chat';
 import { conversationStore } from '../../utils/conversation-store';
 import { logger } from '../../utils/logger';
 import User from '../../models/user';
 import OpenAI from 'openai';
 
+// Set environment variable before any imports
+process.env.OPENAI_API_KEY = 'test-api-key';
+
 // Mock dependencies
 vi.mock('../../utils/conversation-store');
 vi.mock('../../utils/logger');
 vi.mock('../../models/user');
-vi.mock('openai');
+vi.mock('openai', () => {
+    const mockCreate = vi.fn();
+    return {
+        default: vi.fn().mockImplementation(() => ({
+            chat: {
+                completions: {
+                    create: mockCreate
+                }
+            }
+        }))
+    };
+});
+
+// Mock chat service to prevent singleton initialization
+// We need to mock the entire module but keep ChatService class
+vi.mock('../../services/chat', async () => {
+    // Import actual to get ChatService class
+    const actualModule = await vi.importActual<typeof import('../../services/chat')>('../../services/chat');
+    return {
+        ...actualModule,
+        // Export ChatService class but don't export singleton
+        ChatService: actualModule.ChatService,
+        // Don't export chatService singleton
+        chatService: undefined as any
+    };
+});
+
+// Import ChatService after mocks are set up
+import { ChatService } from '../../services/chat';
 
 describe('ChatService', () => {
     let chatService: ChatService;
@@ -23,7 +53,7 @@ describe('ChatService', () => {
         originalEnv = process.env.OPENAI_API_KEY;
         process.env.OPENAI_API_KEY = 'test-api-key';
 
-        // Mock OpenAI
+        // Get mocked OpenAI instance
         mockOpenAI = {
             chat: {
                 completions: {
@@ -31,9 +61,8 @@ describe('ChatService', () => {
                 }
             }
         };
-
         vi.mocked(OpenAI).mockImplementation(() => mockOpenAI as any);
-
+        
         chatService = new ChatService();
     });
 

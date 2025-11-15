@@ -47,7 +47,7 @@ const notificationSchema = new mongoose.Schema({
         required: true
     },
     relatedEntity: {
-        type: {
+        type: new mongoose.Schema({
             type: {
                 type: String,
                 enum: ['supplement', 'meeting', 'form'],
@@ -57,9 +57,8 @@ const notificationSchema = new mongoose.Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 required: true
             }
-        },
-        required: false,
-        _id: false
+        }, { _id: false }),
+        required: false
     },
     createdAt: {
         type: Date,
@@ -91,3 +90,5 @@ interface Notification extends mongoose.Document {
 }
 
 const Notification = mongoose.model<Notification>("Notification", notificationSchema);
+
+export default Notification;

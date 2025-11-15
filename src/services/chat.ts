@@ -22,7 +22,9 @@ export class ChatService {
 ÖNEMLİ KURALLAR:
 - Genel sağlık bilgileri ve öneriler sunabilirsin
 - Kesinlikle teşhis koyma, ilaç önerme veya tıbbi tavsiye verme
-- KESİNLİKLE MARKA İSMİ ÖNERME - Sadece genel takviye türlerinden (Omega 3, Vitamin D, Magnezyum vb.) bahset
+- ⚠️ KESİNLİKLE TAKVİYE GIDA MARKA ÖNERİSİ YAPMA - Kullanıcıya MARKA ismi önerme
+- Kullanıcının ŞU AN KULLANDIĞI takviyeler hakkında bilgi verebilir, yorum yapabilirsin
+- Genel takviye türleri hakkında bilgi verebilirsin (Omega 3 nedir, Vitamin D faydaları vb.)
 - Ciddi sağlık durumlarında mutlaka profesyonel sağlık uzmanına danışmalarını öner
 - Marin platformunda uzman danışmanlarla görüşme imkanı olduğunu hatırlat
 - Dostça, yardımsever ve bilgilendirici bir ton kullan
@@ -37,13 +39,20 @@ PLATFORM BİLGİLERİ:
 - Platform bilimsel araştırmalara dayalı öneriler sunar
 
 YANIT VERME KURALLARI:
-- Kullanıcıya ÖZEL TAVSİYE gerektiren sorularda (beslenme önerileri, takviye önerileri, diyet planı, egzersiz programı vb.):
-  * Form doldurulmuşsa: "Form verilerinizi inceledim ve şu kanaatlere vardım..." şeklinde başla
-  * Form doldurulmamışsa: "Form verilerinizi inceleyemedim (henüz doldurmadınız). Genel öneriler sunabilirim..." şeklinde başla
-  * MUTLAKA mesajın sonuna şu uyarıyı ekle: "⚠️ Bu algoritma senin için Marin uzmanları tarafından oluşturulmuştur ve güvenliğin için son aşamada onlar tarafından kontrol edilmelidir. Bir Marin sağlık profesyoneli ile görüşmelisin."
-- GENEL BİLGİ sorularında (Omega 3 nedir?, Vitamin D'nin faydaları nedir?, Protein nedir? vb.):
-  * Form verilerinden hiç bahsetme, doğrudan bilgiyi ver
-  * Bu tür sorularda uyarı mesajı EKLEME
+- TAKVİYE ÖNERİSİ İSTENDİĞİNDE:
+  * "Takviye önerileri için Marin uzman danışmanlarımızla görüşmelisiniz" de
+  * Form verilerine dayanarak ASLA spesifik ürün/takviye marka önerme
+  * Sadece genel bilgi ver (örn: "Bağışıklık için genelde C vitamini faydalıdır" gibi)
+  * MUTLAKA şu uyarıyı ekle: "⚠️ Kişiselleştirilmiş takviye önerileri için Marin uzmanlarıyla görüşmelisiniz."
+
+- KULLANICININ MEVcut TAKVİYELERİ HAKKINDA:
+  * Kullanıcının şu an kullandığı takviyeler hakkında bilgi verebilirsin
+  * Faydaları, kullanım şekli, dikkat edilmesi gerekenler gibi konularda yorum yapabilirsin
+  * "Bu takviyeyi kullanırken şunlara dikkat edin" şeklinde önerilerde bulunabilirsin
+
+- GENEL BİLGİ sorularında (Omega 3 nedir?, Vitamin D'nin faydaları nedir? vb.):
+  * Form verilerinden bahsetme, doğrudan bilgiyi ver
+  * Uyarı mesajı ekleme, sadece bilgilendirici ol
 
 Unutma: Sen bir bilgi kaynağısın, doktor veya eczacı değilsin.`;
 
@@ -94,6 +103,10 @@ Unutma: Sen bir bilgi kaynağısın, doktor veya eczacı değilsin.`;
             basePrompt += '--- SAĞLIK PROFİLİ SONU ---\n';
         }
 
+        // NOT: Ürün önerileri AI'ya context olarak VERİLMİYOR
+        // Kullanıcı takviye önerisi isterse, uzman danışmanlara yönlendir
+        // Sadece mevcut kullandığı takviyeler hakkında yorum yapabilir
+
         return basePrompt;
     }
 
@@ -133,6 +146,9 @@ Unutma: Sen bir bilgi kaynağısın, doktor veya eczacı değilsin.`;
                 const formData = hasFormData ? user.formData : null;
 
                 logger.debug(`Form verileri durumu - userId: ${userId}, hasFormData: ${!!hasFormData}`);
+
+                // NOT: Artık ürün önerileri AI'ya context olarak verilmiyor
+                // Sadece form verileri kullanılıyor
 
                 // Dinamik system prompt oluştur
                 const systemPromptContent = this.generateSystemPrompt(!!hasFormData, formData);

@@ -80,6 +80,53 @@ describe('User Service', () => {
             expect(result.error).toBe('String error');
         });
 
+        it('should handle user with null optional fields', async () => {
+            const userId = 'user123';
+            const mockUser = {
+                _id: userId,
+                name: 'John',
+                surname: null,
+                email: 'john@example.com',
+                phone: null,
+                dateOfBirth: null,
+                gender: null
+            };
+
+            vi.mocked(User.findById).mockResolvedValue(mockUser as any);
+
+            const result = await getUserProfile(userId);
+
+            expect(result.isSuccess).toBe(true);
+            expect(result.data?.surname).toBeNull();
+            expect(result.data?.phone).toBeNull();
+        });
+
+        it('should handle user with all fields populated', async () => {
+            const userId = 'user123';
+            const mockUser = {
+                _id: userId,
+                name: 'John',
+                surname: 'Doe',
+                email: 'john@example.com',
+                phone: '+905551234567',
+                dateOfBirth: new Date('1990-01-01'),
+                gender: 'Male',
+                weight: 75,
+                height: 180,
+                formData: { age: 34 }
+            };
+
+            vi.mocked(User.findById).mockResolvedValue(mockUser as any);
+
+            const result = await getUserProfile(userId);
+
+            expect(result.isSuccess).toBe(true);
+            expect(result.data).toHaveProperty('name');
+            expect(result.data).toHaveProperty('email');
+            // Should not include weight, height, formData
+            expect(result.data).not.toHaveProperty('weight');
+        });
+
         it('should return only specified fields from user', async () => {
             const userId = 'user123';
             const mockUser = {
@@ -271,6 +318,110 @@ describe('User Service', () => {
 
             expect(result.isSuccess).toBe(true);
             expect(result.data).toMatchObject(multipleUpdates);
+        });
+
+        it('should handle invalid field updates gracefully', async () => {
+            const userId = 'user123';
+            const updateData = {
+                _id: 'new-id', // Should not allow updating _id
+                name: 'Jane'
+            };
+
+            const existingUser = {
+                _id: userId,
+                name: 'John'
+            };
+
+            const updatedUser = {
+                _id: userId, // _id should remain unchanged
+                name: 'Jane'
+            };
+
+            vi.mocked(User.findById).mockResolvedValue(existingUser as any);
+            vi.mocked(User.findByIdAndUpdate).mockResolvedValue(updatedUser as any);
+
+            const result = await updateUserProfile(userId, updateData);
+
+            expect(result.isSuccess).toBe(true);
+            // _id update should be ignored by MongoDB, but we verify function completes
+        });
+
+        it('should handle very large update data', async () => {
+            const userId = 'user123';
+            const largeUpdate = {
+                name: 'A'.repeat(1000),
+                surname: 'B'.repeat(1000),
+                phone: 'C'.repeat(500)
+            };
+
+            const existingUser = {
+                _id: userId,
+                name: 'John'
+            };
+
+            const updatedUser = {
+                _id: userId,
+                ...largeUpdate
+            };
+
+            vi.mocked(User.findById).mockResolvedValue(existingUser as any);
+            vi.mocked(User.findByIdAndUpdate).mockResolvedValue(updatedUser as any);
+
+            const result = await updateUserProfile(userId, largeUpdate);
+
+            expect(result.isSuccess).toBe(true);
+        });
+
+        it('should handle special characters in update data', async () => {
+            const userId = 'user123';
+            const updateData = {
+                name: "O'Brien",
+                surname: 'Müller',
+                phone: '+90 555 123 45 67'
+            };
+
+            const existingUser = {
+                _id: userId,
+                name: 'John'
+            };
+
+            const updatedUser = {
+                _id: userId,
+                ...updateData
+            };
+
+            vi.mocked(User.findById).mockResolvedValue(existingUser as any);
+            vi.mocked(User.findByIdAndUpdate).mockResolvedValue(updatedUser as any);
+
+            const result = await updateUserProfile(userId, updateData);
+
+            expect(result.isSuccess).toBe(true);
+            expect(result.data?.name).toBe("O'Brien");
+        });
+
+        it('should handle concurrent update attempts', async () => {
+            const userId = 'user123';
+            const updateData1 = { name: 'Jane' };
+            const updateData2 = { surname: 'Smith' };
+
+            const existingUser = {
+                _id: userId,
+                name: 'John',
+                surname: 'Doe'
+            };
+
+            vi.mocked(User.findById).mockResolvedValue(existingUser as any);
+            vi.mocked(User.findByIdAndUpdate)
+                .mockResolvedValueOnce({ _id: userId, name: 'Jane', surname: 'Doe' } as any)
+                .mockResolvedValueOnce({ _id: userId, name: 'John', surname: 'Smith' } as any);
+
+            const [result1, result2] = await Promise.all([
+                updateUserProfile(userId, updateData1),
+                updateUserProfile(userId, updateData2)
+            ]);
+
+            expect(result1.isSuccess).toBe(true);
+            expect(result2.isSuccess).toBe(true);
         });
 
         it('should handle non-Error exceptions', async () => {
